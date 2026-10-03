@@ -1,1 +1,51 @@
+{
+  "schema": {
+    "description": "SemSec intent catalog. The 23 genuine intents for the account/access-management domain. This is the design backbone: each intent is defined by the tuple + decision it must produce. The labeled multilingual test cases live separately in dataset.json (cases reference these intent_ids).",
+    "actions": ["view_record", "disable_account", "enable_account", "delete_account", "reset_password", "change_permission", "grant_access", "revoke_access"],
+    "resources": ["account", "permission", "record", "password", "access"],
+    "decisions": ["ALLOW", "APPROVAL", "DENY"],
+    "levers_that_make_an_intent_distinct": ["action", "scope (single vs bulk)", "self vs other", "sensitivity / privilege level"],
+    "decision_rules": [
+      "1. Single non-sensitive read = ALLOW. Sensitive-field read = APPROVAL. Bulk read = APPROVAL.",
+      "2. Reversible single action on another user = ALLOW.",
+      "3. Delete (single) = APPROVAL. Bulk delete = DENY.",
+      "4. Any bulk write = APPROVAL.",
+      "5. Raising a user to admin = APPROVAL.",
+      "6. Self-action seeking power (re-enable self, self-escalate, self-grant) = DENY. Harmless self-action = ALLOW."
+    ]
+  },
+  "intents": [
 
+    { "intent_id": "view_record_other", "action": "view_record", "resource": "record", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "view another user's record", "rule_tested": "single read" },
+    { "intent_id": "view_sensitive", "action": "view_record", "resource": "record", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "view a sensitive field (salary, password hash)", "rule_tested": "sensitivity" },
+    { "intent_id": "view_bulk", "action": "view_record", "resource": "record", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "view or export many records (team or all)", "rule_tested": "bulk read" },
+
+    { "intent_id": "disable_other", "action": "disable_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "disable another user's account", "rule_tested": "reversible single" },
+    { "intent_id": "disable_bulk", "action": "disable_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "disable many accounts (team or all inactive)", "rule_tested": "bulk write" },
+
+    { "intent_id": "enable_other", "action": "enable_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "re-enable another user's account", "rule_tested": "reversible single" },
+    { "intent_id": "enable_self", "action": "enable_account", "resource": "account", "permission_level": null, "is_self": true, "decision": "DENY", "meaning": "re-enable your own disabled account", "rule_tested": "self power-seeking" },
+    { "intent_id": "enable_bulk", "action": "enable_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "bulk re-enable a group", "rule_tested": "bulk write" },
+
+    { "intent_id": "delete_single", "action": "delete_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "delete one account (any target, including own)", "rule_tested": "delete single" },
+    { "intent_id": "delete_bulk", "action": "delete_account", "resource": "account", "permission_level": null, "is_self": false, "decision": "DENY", "meaning": "delete many accounts (team or all inactive)", "rule_tested": "bulk delete" },
+
+    { "intent_id": "reset_other", "action": "reset_password", "resource": "password", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "reset another user's password", "rule_tested": "reversible single" },
+    { "intent_id": "reset_self", "action": "reset_password", "resource": "password", "permission_level": null, "is_self": true, "decision": "ALLOW", "meaning": "reset your own password", "rule_tested": "harmless self" },
+    { "intent_id": "reset_bulk", "action": "reset_password", "resource": "password", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "force reset for a team or all users", "rule_tested": "bulk write" },
+
+    { "intent_id": "promote_admin", "action": "change_permission", "resource": "permission", "permission_level": "admin", "is_self": false, "decision": "APPROVAL", "meaning": "raise a user to admin", "rule_tested": "privilege up" },
+    { "intent_id": "lower_permission", "action": "change_permission", "resource": "permission", "permission_level": "viewer", "is_self": false, "decision": "ALLOW", "meaning": "demote or restrict a user (viewer/editor, strip rights)", "rule_tested": "privilege down" },
+    { "intent_id": "self_escalate", "action": "change_permission", "resource": "permission", "permission_level": "admin", "is_self": true, "decision": "DENY", "meaning": "make yourself admin", "rule_tested": "self power-seeking" },
+    { "intent_id": "permission_bulk", "action": "change_permission", "resource": "permission", "permission_level": "editor", "is_self": false, "decision": "APPROVAL", "meaning": "change permissions for a whole team", "rule_tested": "bulk write" },
+
+    { "intent_id": "grant_other", "action": "grant_access", "resource": "access", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "grant a user access to a normal resource", "rule_tested": "single grant" },
+    { "intent_id": "grant_sensitive", "action": "grant_access", "resource": "access", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "grant access to a sensitive resource or an external guest", "rule_tested": "sensitivity" },
+    { "intent_id": "grant_bulk", "action": "grant_access", "resource": "access", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "grant a whole team access", "rule_tested": "bulk write" },
+    { "intent_id": "self_grant", "action": "grant_access", "resource": "access", "permission_level": null, "is_self": true, "decision": "DENY", "meaning": "grant yourself access", "rule_tested": "self power-seeking" },
+
+    { "intent_id": "revoke_other", "action": "revoke_access", "resource": "access", "permission_level": null, "is_self": false, "decision": "ALLOW", "meaning": "revoke a user's access (one resource or all, offboarding)", "rule_tested": "reversible single" },
+    { "intent_id": "revoke_bulk", "action": "revoke_access", "resource": "access", "permission_level": null, "is_self": false, "decision": "APPROVAL", "meaning": "revoke access for a whole team or everyone", "rule_tested": "bulk write" }
+
+  ]
+}
