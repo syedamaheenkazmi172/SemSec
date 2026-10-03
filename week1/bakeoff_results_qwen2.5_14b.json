@@ -30,7 +30,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 20.949323415756226
+    "latency": 19.371088981628418
   },
   {
     "test": {
@@ -63,7 +63,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.692405939102173
+    "latency": 7.121359348297119
   },
   {
     "test": {
@@ -96,7 +96,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.101424217224121
+    "latency": 7.379589080810547
   },
   {
     "test": {
@@ -129,7 +129,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.53115439414978
+    "latency": 7.0903449058532715
   },
   {
     "test": {
@@ -162,7 +162,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.136043071746826
+    "latency": 6.9919350147247314
   },
   {
     "test": {
@@ -196,7 +196,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.704094171524048
+    "latency": 7.3722825050354
   },
   {
     "test": {
@@ -230,7 +230,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 6.471026182174683
+    "latency": 7.1491477489471436
   },
   {
     "test": {
@@ -265,7 +265,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.720553874969482
+    "latency": 7.276191711425781
   },
   {
     "test": {
@@ -298,7 +298,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.784066915512085
+    "latency": 6.871962547302246
   },
   {
     "test": {
@@ -329,7 +329,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 6.796726226806641
+    "latency": 7.0505383014678955
   },
   {
     "test": {
@@ -363,7 +363,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.937920093536377
+    "latency": 7.180805206298828
   },
   {
     "test": {
@@ -397,7 +397,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.080862045288086
+    "latency": 7.5414392948150635
   },
   {
     "test": {
@@ -432,7 +432,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.691769361495972
+    "latency": 7.1164491176605225
   },
   {
     "test": {
@@ -466,7 +466,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.633147716522217
+    "latency": 7.150068283081055
   },
   {
     "test": {
@@ -499,7 +499,7 @@
       "full": false,
       "fail_open": false
     },
-    "latency": 7.4488303661346436
+    "latency": 7.448365926742554
   },
   {
     "test": {
@@ -532,7 +532,7 @@
       "full": false,
       "fail_open": false
     },
-    "latency": 7.206405162811279
+    "latency": 7.055846452713013
   },
   {
     "test": {
@@ -566,7 +566,7 @@
       "full": false,
       "fail_open": false
     },
-    "latency": 9.30171513557434
+    "latency": 8.315653562545776
   },
   {
     "test": {
@@ -597,7 +597,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 8.2863290309906
+    "latency": 7.207805871963501
   },
   {
     "test": {
@@ -628,7 +628,7 @@
       "full": false,
       "fail_open": false
     },
-    "latency": 6.7749409675598145
+    "latency": 7.223213195800781
   },
   {
     "test": {
@@ -661,7 +661,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.603253602981567
+    "latency": 6.839140892028809
   },
   {
     "test": {
@@ -694,7 +694,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 6.885993242263794
+    "latency": 6.991719484329224
   },
   {
     "test": {
@@ -727,7 +727,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 8.218745231628418
+    "latency": 7.013316869735718
   },
   {
     "test": {
@@ -763,7 +763,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 6.757126092910767
+    "latency": 6.8254992961883545
   },
   {
     "test": {
@@ -797,7 +797,7 @@
       "full": false,
       "fail_open": true
     },
-    "latency": 9.862703561782837
+    "latency": 9.226201295852661
   },
   {
     "test": {
@@ -831,7 +831,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.461386680603027
+    "latency": 6.995495080947876
   },
   {
     "test": {
@@ -864,7 +864,7 @@
       "full": false,
       "fail_open": false
     },
-    "latency": 8.04129958152771
+    "latency": 7.354684114456177
   },
   {
     "test": {
@@ -897,7 +897,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 6.913182497024536
+    "latency": 7.0680646896362305
   },
   {
     "test": {
@@ -931,7 +931,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.624433517456055
+    "latency": 7.340165853500366
   },
   {
     "test": {
@@ -964,7 +964,7 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.417758464813232
+    "latency": 7.11213493347168
   },
   {
     "test": {
@@ -997,6 +997,6 @@
       "full": true,
       "fail_open": false
     },
-    "latency": 7.731184244155884
+    "latency": 6.996839761734009
   }
 ]

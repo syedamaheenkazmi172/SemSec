@@ -15,8 +15,8 @@ Changes from v1:
 
 Usage:
   python3 -m pip install requests
-  python3 bakeoff.py                              # default: both models
-  python3 bakeoff.py qwen2.5:14b qwen3:14b        # compare specific models
+  python3 bakeoff.py qwen2.5:14b                  # one model
+  python3 bakeoff.py llama3.2:3b qwen2.5:14b      # compare several models
 """
 
 import json
@@ -25,7 +25,6 @@ import time
 import requests
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
-DEFAULT_MODELS = ["llama3.2:3b", "qwen2.5:14b"]
 
 ALLOWED_ACTIONS = [
     "view_record", "disable_account", "enable_account", "delete_account",
@@ -222,7 +221,10 @@ def pct(a, b):
 
 
 def main():
-    models = sys.argv[1:] or DEFAULT_MODELS
+    models = sys.argv[1:]
+    if not models:
+        sys.exit("Usage: python3 bakeoff.py <model> [<model> ...]\n"
+                 "Example: python3 bakeoff.py llama3.2:3b qwen2.5:14b")
     for model in models:
         print("\n" + "=" * 74)
         print(f"MODEL: {model}")
