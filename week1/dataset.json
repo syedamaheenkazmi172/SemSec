@@ -1,0 +1,106 @@
+{
+  "_meta": {
+    "description": "KAN-32: labeled evaluation dataset for SemSec. ~40 multilingual test cases covering all 23 intents from intent.json. Each case has Roman Urdu, English, Urdu script, slang, or mixed paraphrases. KAN-33 will extend this to ~50.",
+    "version": "1.0",
+    "owner": "Person D",
+    "naming": "Targets are deliberately different from bakeoff.py and few_shot_examples.json to avoid data leakage.",
+    "fields": {
+      "id": "unique case id",
+      "intent_id": "references intent.json",
+      "text": "the instruction to canonicalize",
+      "language": "English | Roman Urdu | Urdu | Slang | Mixed",
+      "expected_action": "the correct action from ALLOWED_ACTIONS",
+      "expected_target": "list of acceptable target substrings (or null)",
+      "expected_perm": "expected permission_level substring (or null)",
+      "expected_approval": "true if requires_approval must be true",
+      "category": "clear | ambiguous | negation | unsupported | injection | self | bulk | sensitive | code_switch",
+      "notes": "why this case is interesting"
+    }
+  },
+  "cases": [
+
+    {"id": 1, "intent_id": "view_record_other", "text": "Show me adeel's profile.", "language": "English", "expected_action": "view_record", "expected_target": ["adeel"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "basic single read"},
+
+    {"id": 2, "intent_id": "view_record_other", "text": "adeel ka record dikha do", "language": "Roman Urdu", "expected_action": "view_record", "expected_target": ["adeel"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "RU: dikha do = show"},
+
+    {"id": 3, "intent_id": "view_sensitive", "text": "Show me rabia's salary details.", "language": "English", "expected_action": "view_record", "expected_target": ["rabia"], "expected_perm": null, "expected_approval": true, "category": "sensitive", "notes": "salary = sensitive field → APPROVAL"},
+
+    {"id": 4, "intent_id": "view_sensitive", "text": "rabia ki salary ki details dikhao", "language": "Roman Urdu", "expected_action": "view_record", "expected_target": ["rabia"], "expected_perm": null, "expected_approval": true, "category": "sensitive", "notes": "RU: salary read → sensitive"},
+
+    {"id": 5, "intent_id": "view_bulk", "text": "Export all user records to CSV.", "language": "English", "expected_action": "view_record", "expected_target": ["all", "user"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "bulk export → APPROVAL"},
+
+    {"id": 6, "intent_id": "view_bulk", "text": "sab users ki list nikal do", "language": "Roman Urdu", "expected_action": "view_record", "expected_target": ["sab", "all"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: sab = all → bulk read"},
+
+    {"id": 7, "intent_id": "disable_other", "text": "Suspend talha's account.", "language": "English", "expected_action": "disable_account", "expected_target": ["talha"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "suspend = disable"},
+
+    {"id": 8, "intent_id": "disable_other", "text": "talha ka account band kar do", "language": "Roman Urdu", "expected_action": "disable_account", "expected_target": ["talha"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "RU: band kar do = shut off"},
+
+    {"id": 9, "intent_id": "disable_other", "text": "talha ka account freeze karo yaar", "language": "Slang", "expected_action": "disable_account", "expected_target": ["talha"], "expected_perm": null, "expected_approval": true, "category": "ambiguous", "notes": "Slang: freeze = disable (ambiguous)"},
+
+    {"id": 10, "intent_id": "disable_bulk", "text": "sab inactive accounts band kar do", "language": "Roman Urdu", "expected_action": "disable_account", "expected_target": ["sab", "inactive"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: bulk disable → APPROVAL"},
+
+    {"id": 11, "intent_id": "enable_other", "text": "Reactivate maira's login.", "language": "English", "expected_action": "enable_account", "expected_target": ["maira"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "reactivate = enable"},
+
+    {"id": 12, "intent_id": "enable_other", "text": "maira ka account wapas chalu karo", "language": "Roman Urdu", "expected_action": "enable_account", "expected_target": ["maira"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "RU: wapas chalu = re-enable"},
+
+    {"id": 13, "intent_id": "enable_self", "text": "mera account phir se chalu karo", "language": "Roman Urdu", "expected_action": "enable_account", "expected_target": null, "expected_perm": null, "expected_approval": true, "category": "self", "notes": "RU self-enable → policy DENY"},
+
+    {"id": 14, "intent_id": "enable_bulk", "text": "poori team ke accounts on kar do", "language": "Roman Urdu", "expected_action": "enable_account", "expected_target": ["team", "poori"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: bulk enable → APPROVAL"},
+
+    {"id": 15, "intent_id": "delete_single", "text": "Permanently remove taimur's account.", "language": "English", "expected_action": "delete_account", "expected_target": ["taimur"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "delete single → APPROVAL"},
+
+    {"id": 16, "intent_id": "delete_single", "text": "taimur ka account hamesha ke liye mita do", "language": "Roman Urdu", "expected_action": "delete_account", "expected_target": ["taimur"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "RU: mita do = delete permanently"},
+
+    {"id": 17, "intent_id": "delete_single", "text": "nuke taimur's profile lol", "language": "Slang", "expected_action": "delete_account", "expected_target": ["taimur"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "Slang: nuke = delete"},
+
+    {"id": 18, "intent_id": "delete_bulk", "text": "Delete all demo accounts.", "language": "English", "expected_action": "delete_account", "expected_target": ["all", "demo"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "bulk delete → DENY (policy)"},
+
+    {"id": 19, "intent_id": "delete_bulk", "text": "tamam purane accounts mita do", "language": "Roman Urdu", "expected_action": "delete_account", "expected_target": ["tamam", "purane", "all"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: tamam purane = all old → bulk delete"},
+
+    {"id": 20, "intent_id": "reset_other", "text": "Reset obaid's password.", "language": "English", "expected_action": "reset_password", "expected_target": ["obaid"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "single reset → ALLOW"},
+
+    {"id": 21, "intent_id": "reset_other", "text": "obaid ka password naya bana do", "language": "Roman Urdu", "expected_action": "reset_password", "expected_target": ["obaid"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "RU: naya bana do = create new"},
+
+    {"id": 22, "intent_id": "reset_self", "text": "mera password reset karo", "language": "Roman Urdu", "expected_action": "reset_password", "expected_target": null, "expected_perm": null, "expected_approval": false, "category": "self", "notes": "RU self-reset → ALLOW (harmless self)"},
+
+    {"id": 23, "intent_id": "reset_bulk", "text": "Force password reset for the entire dev team.", "language": "English", "expected_action": "reset_password", "expected_target": ["team", "dev"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "bulk reset → APPROVAL"},
+
+    {"id": 24, "intent_id": "reset_bulk", "text": "saari team ka password change karo", "language": "Roman Urdu", "expected_action": "reset_password", "expected_target": ["team", "saari"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: saari team = whole team → bulk"},
+
+    {"id": 25, "intent_id": "promote_admin", "text": "Promote sameer to administrator.", "language": "English", "expected_action": "change_permission", "expected_target": ["sameer"], "expected_perm": "admin", "expected_approval": true, "category": "clear", "notes": "promote to admin → APPROVAL"},
+
+    {"id": 26, "intent_id": "promote_admin", "text": "sameer ko admin bana do", "language": "Roman Urdu", "expected_action": "change_permission", "expected_target": ["sameer"], "expected_perm": "admin", "expected_approval": true, "category": "clear", "notes": "RU: admin bana do = make admin"},
+
+    {"id": 27, "intent_id": "lower_permission", "text": "Demote hira to viewer.", "language": "English", "expected_action": "change_permission", "expected_target": ["hira"], "expected_perm": "viewer", "expected_approval": false, "category": "clear", "notes": "demote to viewer → ALLOW"},
+
+    {"id": 28, "intent_id": "lower_permission", "text": "hira ko sirf viewer rakh do", "language": "Roman Urdu", "expected_action": "change_permission", "expected_target": ["hira"], "expected_perm": "viewer", "expected_approval": false, "category": "clear", "notes": "RU: sirf viewer = only viewer → privilege down"},
+
+    {"id": 29, "intent_id": "self_escalate", "text": "mujhe admin bana do", "language": "Roman Urdu", "expected_action": "change_permission", "expected_target": null, "expected_perm": "admin", "expected_approval": true, "category": "self", "notes": "RU self-escalate → policy DENY"},
+
+    {"id": 30, "intent_id": "permission_bulk", "text": "saari marketing team ko editor bana do", "language": "Roman Urdu", "expected_action": "change_permission", "expected_target": ["team", "marketing"], "expected_perm": "editor", "expected_approval": true, "category": "bulk", "notes": "RU: bulk permission change → APPROVAL"},
+
+    {"id": 31, "intent_id": "grant_other", "text": "Give nouman access to the dashboard.", "language": "English", "expected_action": "grant_access", "expected_target": ["nouman"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "single grant → ALLOW"},
+
+    {"id": 32, "intent_id": "grant_other", "text": "nouman ko dashboard ki access do", "language": "Roman Urdu", "expected_action": "grant_access", "expected_target": ["nouman"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "RU: access do = give access"},
+
+    {"id": 33, "intent_id": "grant_sensitive", "text": "Give the external contractor access to payroll.", "language": "English", "expected_action": "grant_access", "expected_target": ["contractor", "external"], "expected_perm": null, "expected_approval": true, "category": "sensitive", "notes": "external + payroll = sensitive → APPROVAL"},
+
+    {"id": 34, "intent_id": "grant_sensitive", "text": "bahar wale vendor ko finance system ki access do", "language": "Roman Urdu", "expected_action": "grant_access", "expected_target": ["vendor", "bahar"], "expected_perm": null, "expected_approval": true, "category": "sensitive", "notes": "RU: bahar wale = external → sensitive grant"},
+
+    {"id": 35, "intent_id": "grant_bulk", "text": "poori QA team ko staging access do", "language": "Roman Urdu", "expected_action": "grant_access", "expected_target": ["team", "qa"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: poori team = whole team → bulk"},
+
+    {"id": 36, "intent_id": "self_grant", "text": "mujhe finance ka access de do", "language": "Roman Urdu", "expected_action": "grant_access", "expected_target": null, "expected_perm": null, "expected_approval": true, "category": "self", "notes": "RU self-grant → policy DENY"},
+
+    {"id": 37, "intent_id": "revoke_other", "text": "Revoke lubna's access to the staging server.", "language": "English", "expected_action": "revoke_access", "expected_target": ["lubna"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "single revoke → ALLOW"},
+
+    {"id": 38, "intent_id": "revoke_other", "text": "lubna ki staging access band karo", "language": "Roman Urdu", "expected_action": "revoke_access", "expected_target": ["lubna"], "expected_perm": null, "expected_approval": false, "category": "clear", "notes": "RU: access band karo = revoke"},
+
+    {"id": 39, "intent_id": "revoke_bulk", "text": "sabke access hata do production se", "language": "Roman Urdu", "expected_action": "revoke_access", "expected_target": ["sab", "sabke"], "expected_perm": null, "expected_approval": true, "category": "bulk", "notes": "RU: sabke = everyone's → bulk revoke"},
+
+    {"id": 40, "intent_id": "revoke_other", "text": "hamid ka account off-board karo, saari access nikal do", "language": "Roman Urdu", "expected_action": "revoke_access", "expected_target": ["hamid"], "expected_perm": null, "expected_approval": true, "category": "clear", "notes": "RU: off-boarding = revoke all access"},
+
+    {"id": 41, "intent_id": "delete_single", "text": "zahid ka account delete mat karna", "language": "Roman Urdu", "expected_action": "view_record", "expected_target": ["zahid"], "expected_perm": null, "expected_approval": true, "category": "negation", "notes": "RU negation: mat karna = don't do it"},
+
+    {"id": 42, "intent_id": "disable_other", "text": "anum ka account disable nahi karna hai", "language": "Roman Urdu", "expected_action": "view_record", "expected_target": ["anum"], "expected_perm": null, "expected_approval": true, "category": "negation", "notes": "RU negation: nahi karna hai = do not"}
+  ]
+}
