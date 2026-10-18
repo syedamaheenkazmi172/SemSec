@@ -76,7 +76,9 @@ JSON shape:
   "target": "<the account or user the action applies to>",
   "resource": "account | permission | record | password | access",
   "permission_level": "<string or null, only for change_permission>",
-  "requires_approval": true or false
+  "requires_approval": true or false,
+  "is_bulk": true if the instruction targets many/all accounts (e.g. sab, tamam, all, everyone, purane accounts), otherwise false,
+  "sensitive": true if it touches salary, payroll, finance, bank, medical, confidential data, or an external party (vendor, contractor), otherwise false
 }}
 
 Rules:
@@ -113,7 +115,8 @@ SYSTEM_PROMPT = _build_system_prompt(_EXAMPLES)
 def _fail(action):
     """Safe 'nothing understood' tuple. policy.py DENIES action 'error' / 'invalid'."""
     return {"action": action, "target": None, "resource": None,
-            "permission_level": None, "requires_approval": True}
+            "permission_level": None, "requires_approval": True,
+            "is_bulk": False, "sensitive": False}
 
 
 def validate(out):
@@ -144,6 +147,8 @@ def validate(out):
         "permission_level": perm,
         # fail closed: only an explicit false counts as "no approval needed"
         "requires_approval": out.get("requires_approval") is not False,
+        "is_bulk": out.get("is_bulk") is True,
+        "sensitive": out.get("sensitive") is True,
     }
 
 
@@ -178,7 +183,7 @@ if __name__ == "__main__":
                 "not even a dict",
                 {"action": "view_record", "target": "x" * 500}]:
         v = validate(bad)
-        print(f"{str(bad)[:40]:42} -> action={v['action']}, target_len={len(v['target'] or '')}")
+        print(f"{str(bad)[:40]:42} -> action={v['action']}, target_len={len(v['target'] or '')}, is_bulk={v['is_bulk']}, sensitive={v['sensitive']}")
 
     print(f"\n--- live test with {MODEL} (needs Ollama running) ---")
     samples = [
