@@ -127,6 +127,27 @@ class TestPolicyIntentRules(unittest.TestCase):
         res_reset = authorize("admin", {"action": "reset_password", "target": "self"}, actor="dave", log=False)
         self.assertEqual(res_reset["decision"], ALLOW)
 
+    def test_model_flags_and_keyword_or_logic(self):
+        # a view_record tuple with sensitive=True and a harmless target -> APPROVAL
+        res_view = authorize("admin", {"action": "view_record", "target": "dave", "sensitive": True}, log=False)
+        self.assertEqual(res_view["decision"], APPROVAL)
+        self.assertTrue(res_view["sensitive"])
+
+        # a delete_account tuple with is_bulk=True and a harmless target -> DENY
+        res_del = authorize("admin", {"action": "delete_account", "target": "dave", "is_bulk": True}, log=False)
+        self.assertEqual(res_del["decision"], DENY)
+        self.assertTrue(res_del["is_bulk"])
+
+        # a grant_access tuple with sensitive=True -> APPROVAL
+        res_grant = authorize("admin", {"action": "grant_access", "target": "dave", "sensitive": True}, log=False)
+        self.assertEqual(res_grant["decision"], APPROVAL)
+        self.assertTrue(res_grant["sensitive"])
+
+        # a tuple with sensitive=False but target "payroll" -> still APPROVAL (OR logic)
+        res_or = authorize("admin", {"action": "view_record", "target": "payroll", "sensitive": False}, log=False)
+        self.assertEqual(res_or["decision"], APPROVAL)
+        self.assertTrue(res_or["sensitive"])
+
 
 class TestPolicyFailClosed(unittest.TestCase):
     """Test fail-closed guarantees on bad, unknown, or corrupted data."""
