@@ -1,12 +1,12 @@
 """
-eval_chart.py - KAN-35: run dataset.json through the weak agent and SemSec,
+eval_chart.py - KAN-35: run chart_dataset.json through the weak agent and SemSec,
 Author: Sohaib
 compute the numbers, and draw the chart image for the slides.
 
-Run from the week1/ folder (Ollama running, qwen2.5:14b and llama3.2:3b pulled):
+Run from the src/ folder (Ollama running, qwen2.5:14b and llama3.2:3b pulled):
 
-    python eval_chart.py                         # real run: ~50 agent + 50 extractor calls
-    python eval_chart.py --from-results eval_results.json   # redraw chart, no Ollama needed
+    python eval_chart.py --out ../chart_out      # real run: ~50 agent + 50 extractor calls
+    python eval_chart.py --from-results ../chart_out/eval_results.json --out ../chart_out   # redraw chart, no Ollama needed
     python eval_chart.py --stub --out /tmp/stub  # offline test with FAKE data (chart is watermarked)
 
 Outputs (in --out, default "."):
@@ -21,7 +21,7 @@ What is measured, per language (English / Roman Urdu):
 and across languages:
     Equivalence : % of intents where SemSec gives the SAME decision in both languages.
 
-The caller role is "admin" because dataset.json decisions were labelled for an admin.
+The caller role is "admin" because chart_dataset.json decisions were labelled for an admin.
 """
 
 import argparse
@@ -281,7 +281,7 @@ def draw_chart(m, path, stub=False):
 # ----------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", default=os.path.join(HERE, "dataset.json"))
+    ap.add_argument("--dataset", default=os.path.join(HERE, "chart_dataset.json"))
     ap.add_argument("--out", default=".")
     ap.add_argument("--from-results", help="skip the model run; reuse a saved eval_results.json")
     ap.add_argument("--stub", action="store_true", help="offline test with FAKE components")
