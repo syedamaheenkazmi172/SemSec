@@ -30,8 +30,8 @@ ROLE = "admin"      # admin may do everything, so only the intent rules decide
 SEVERITY = {"ALLOW": 0, "APPROVAL": 1, "DENY": 2}
 
 
-def load():
-    with open(os.path.join(HERE, "dataset.json"), encoding="utf-8") as f:
+def load(filename="dataset.json"):
+    with open(os.path.join(HERE, filename), encoding="utf-8") as f:
         cases = json.load(f)["cases"]
     with open(os.path.join(HERE, "intent.json"), encoding="utf-8") as f:
         intents = {i["intent_id"]: i["decision"] for i in json.load(f)["intents"]}
@@ -137,7 +137,11 @@ def show(rows, s, by_lang, by_cat, with_agent):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")        # so Urdu script prints on Windows
     with_agent = "--agent" in sys.argv
-    cases, intents = load()
+    use_heldout = "--heldout" in sys.argv
+    dataset_file = "heldout.json" if use_heldout else "dataset.json"
+    out_file = "eval_results_heldout.json" if use_heldout else "eval_results.json"
+
+    cases, intents = load(dataset_file)
     print(f"Running {len(cases)} cases as role '{ROLE}' ...")
     rows = evaluate(cases, intents, with_agent)
 
@@ -145,7 +149,7 @@ def main():
     by_lang, by_cat = breakdown(rows, "language"), breakdown(rows, "category")
     show(rows, s, by_lang, by_cat, with_agent)
 
-    path = os.path.join(HERE, "eval_results.json")
+    path = os.path.join(HERE, out_file)
     with open(path, "w", encoding="utf-8") as f:
         json.dump({"summary": s, "by_language": by_lang, "by_category": by_cat, "rows": rows},
                   f, ensure_ascii=False, indent=2)
