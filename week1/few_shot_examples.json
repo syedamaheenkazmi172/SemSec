@@ -182,6 +182,27 @@
       "language": "Urdu",
       "category": "negation",
       "output": {"action":"view_record","target":"بلال","resource":"record","permission_level":null,"requires_approval":true,"is_bulk":false,"sensitive":false}
+    },
+    {
+      "id": 27,
+      "instruction": "Mujhe admin bana do.",
+      "language": "Roman Urdu",
+      "category": "change_permission",
+      "output": {"action":"change_permission","target":"me","resource":"permission","permission_level":"admin","requires_approval":true,"is_bulk":false,"sensitive":false}
+    },
+    {
+      "id": 28,
+      "instruction": "make me an admin",
+      "language": "English",
+      "category": "change_permission",
+      "output": {"action":"change_permission","target":"me","resource":"permission","permission_level":"admin","requires_approval":true,"is_bulk":false,"sensitive":false}
+    },
+    {
+      "id": 29,
+      "instruction": "mere account ko admin rights de do",
+      "language": "Roman Urdu",
+      "category": "change_permission",
+      "output": {"action":"change_permission","target":"me","resource":"permission","permission_level":"admin","requires_approval":true,"is_bulk":false,"sensitive":false}
     }
   ]
 }
