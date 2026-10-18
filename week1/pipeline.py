@@ -27,10 +27,18 @@ import tools
 ALLOW, APPROVAL, DENY = "ALLOW", "APPROVAL", "DENY"
 
 
+def _error_tuple():
+    """Same safe tuple extractor.py returns on failure. policy.py DENIES it."""
+    return {"action": "error", "target": None, "resource": None,
+            "permission_level": None, "requires_approval": True}
+
+
 def decide(tup, role, actor="me", execute=True, log=True):
     """Steps 2 and 3: authorize the tuple, then run the tool ONLY on ALLOW."""
     try:
         policy = authorize(role, tup, actor=actor, log=log)
+        if not isinstance(policy, dict):            # policy must return a dict
+            raise TypeError("policy returned a non-dict")
     except Exception as e:                          # policy crashed -> deny
         policy = {"decision": DENY,
                   "reasons": [f"policy crashed: {type(e).__name__} (fail closed)"]}
@@ -57,8 +65,9 @@ def run_pipeline(instruction, role="admin", actor="me", execute=True, log=True):
     try:
         tup = extract(instruction)
     except Exception:                               # extract() never raises, but be safe
-        tup = {"action": "error", "target": None, "resource": None,
-               "permission_level": None, "requires_approval": True}
+        tup = _error_tuple()
+    if not isinstance(tup, dict):                   # extract() must return a dict
+        tup = _error_tuple()
 
     result = decide(tup, role, actor=actor, execute=execute, log=log)
     result["instruction"] = instruction

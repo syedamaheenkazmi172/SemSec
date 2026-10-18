@@ -28,6 +28,7 @@ from policy import ALLOWED_ACTIONS, RESOURCE_FOR_ACTION, authorize
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL = "qwen2.5:14b"
 MAX_TARGET_LEN = 100
+MAX_INSTRUCTION_LEN = 500
 
 # ---------------------------------------------------------------------------
 # KAN-13: build the system prompt from few_shot_examples.json
@@ -150,6 +151,8 @@ def validate(out):
 def extract(instruction):
     """KAN-11: ask the model, then validate. Never raises."""
     if not isinstance(instruction, str) or not instruction.strip():
+        return _fail("invalid")
+    if len(instruction) > MAX_INSTRUCTION_LEN:      # huge input = stuffing or a slow call
         return _fail("invalid")
 
     payload = {
