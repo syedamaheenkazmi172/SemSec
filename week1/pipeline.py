@@ -58,7 +58,8 @@ def run_pipeline(instruction, role="admin", actor="me", execute=True, log=True):
         tup = extract(instruction)
     except Exception:                               # extract() never raises, but be safe
         tup = {"action": "error", "target": None, "resource": None,
-               "permission_level": None, "requires_approval": True}
+               "permission_level": None, "requires_approval": True,
+               "is_bulk": False, "sensitive": False}
 
     result = decide(tup, role, actor=actor, execute=execute, log=log)
     result["instruction"] = instruction
