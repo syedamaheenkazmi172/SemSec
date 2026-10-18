@@ -25,7 +25,13 @@ Input: one sentence in any language or style. Never raises.
      "target": "<the account / user the action applies to>",
      "resource": "account | permission | record | password | access",
      "permission_level": "<string or null; only for change_permission>",
-     "requires_approval": true}
+     "requires_approval": true,
+     "is_bulk": false,
+     "sensitive": false}
+
+"is_bulk" (true if the instruction targets many/all accounts) and "sensitive"
+(true if it touches salary, payroll, finance, bank, medical, confidential data,
+or an external party) both default to false. Only an explicit true counts.
 
 If the model output is unusable, action is "invalid" (not one of the 8) or
 "error" (model unreachable / bad JSON). policy.py DENIES both.
@@ -37,7 +43,9 @@ Input: the role and the dict from extract(). No LLM inside. Never raises.
     {"decision", "reasons", "role", "action", "target", "resource",
      "permission_level", "is_self", "is_bulk", "sensitive", "ts"}
 
-decision is ALLOW, APPROVAL or DENY.
+decision is ALLOW, APPROVAL or DENY. is_bulk and sensitive are computed as
+(model flag OR keyword check on target), so the model can only raise risk,
+never lower it.
 
 ## 3. propose(instruction) -> dict   (week1/agent.py)
 
