@@ -95,17 +95,15 @@ def _is_self(tup, actor):
 
 
 def _is_bulk(tup):
-    if "is_bulk" in tup and tup["is_bulk"] is not None:
-        return bool(tup["is_bulk"])
     tgt = _words(tup.get("target"))
-    return any(w in tgt.split() or w == tgt for w in BULK_WORDS)
+    kw = any(w in tgt.split() or w == tgt for w in BULK_WORDS)
+    return bool(tup.get("is_bulk")) or kw
 
 
 def _is_sensitive(tup):
-    if "sensitive" in tup and tup["sensitive"] is not None:
-        return bool(tup["sensitive"])
     tgt = _words(tup.get("target"))
-    return any(w in tgt for w in SENSITIVE_WORDS)
+    kw = any(w in tgt for w in SENSITIVE_WORDS)
+    return bool(tup.get("sensitive")) or kw
 
 
 # ---------------------------------------------------------------------------
