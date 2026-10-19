@@ -14,12 +14,12 @@ Outputs (in --out, default "."):
     eval_metrics.json   the numbers shown on the chart
     semsec_chart.png    the slide image (200 dpi)
 
-What is measured, per language (English / Roman Urdu):
+What is measured, per language (English / Urdu / Roman Urdu):
     Weak agent  : action accuracy        (agent action == expected_action)
     SemSec      : action accuracy        (extractor action == expected_action)
     SemSec      : decision accuracy      (policy decision == expected_decision)
 and across languages:
-    Equivalence : % of intents where SemSec gives the SAME decision in both languages.
+    Equivalence : % of intents where SemSec gives the SAME decision in all languages.
 
 The caller role is "admin" because chart_dataset.json decisions were labelled for an admin.
 """
@@ -34,7 +34,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 ROLE = "admin"
-LANGS = [("english", "English"), ("roman_urdu", "Roman Urdu")]
+LANGS = [("english", "English"), ("urdu", "Urdu"), ("roman_urdu", "Roman Urdu")]
 
 # ----------------------------------------------------------------------------
 # Target matching. Applied identically to the agent and to SemSec, so neither is
@@ -171,7 +171,8 @@ def compute_metrics(results):
     groups = {}
     for r in results:
         groups.setdefault(r["group_id"], {})[r["language"]] = r
-    complete = {g: v for g, v in groups.items() if len(v) == len(LANGS)}
+    codes = {c for c, _ in LANGS}
+    complete = {g: {c: v[c] for c in codes} for g, v in groups.items() if codes <= set(v)}
     same = [g for g, v in complete.items()
             if len({x["semsec_decision"] for x in v.values()}) == 1]
     both_right = [g for g, v in complete.items() if all(x["semsec_decision_ok"] for x in v.values())]
@@ -207,24 +208,24 @@ def draw_chart(m, path, stub=False):
     pl, eq = m["per_language"], m["equivalence"]
     n_intents = eq["groups"]
 
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13, 6.8), gridspec_kw={"width_ratios": [1, 1.15]})
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(16, 7), gridspec_kw={"width_ratios": [1, 1.15]})
 
     def bar(ax, x, w, pct_val, k, n, color):
         ax.bar(x, pct_val, w, color=color, zorder=3)
         ax.text(x, pct_val + 2, f"{pct_val:.0f}%", ha="center", va="bottom",
-                fontsize=17, fontweight="bold", zorder=4)
+                fontsize=14, fontweight="bold", zorder=4)
         inside = pct_val >= 14
         ax.text(x, 3 if inside else pct_val + 11, f"{k} of {n}", ha="center",
-                va="bottom", fontsize=11, color="white" if inside else GREY, zorder=4)
+                va="bottom", fontsize=9, color="white" if inside else GREY, zorder=4)
 
     # ---- Panel 1: does it read the instruction correctly? (action) ----
-    w = 0.34
+    w = 0.36
     for i, lang in enumerate(langs):
         v = pl[lang]
         bar(a1, i - w / 2 - 0.01, w, v["agent_action_acc"], v["agent_action_correct"], v["n"], RED)
         bar(a1, i + w / 2 + 0.01, w, v["semsec_action_acc"], v["semsec_action_correct"], v["n"], BLUE)
     a1.set_xticks(range(len(langs)))
-    a1.set_xticklabels(langs, fontsize=15)
+    a1.set_xticklabels(langs, fontsize=14)
     a1.set_title("1. Does it understand the instruction?", loc="left", fontsize=16,
                  fontweight="bold", pad=34)
     a1.text(0, 1.03, "Action it picked matches the labeled answer", transform=a1.transAxes,
@@ -238,14 +239,15 @@ def draw_chart(m, path, stub=False):
     for i, lang in enumerate(langs):
         v = pl[lang]
         bar(a2, i, w2, v["semsec_decision_acc"], v["semsec_decision_correct"], v["n"], BLUE)
-    bar(a2, 2.0, w2, eq["equivalence_rate"], eq["same_decision_in_all_languages"], n_intents, DARK)
-    a2.set_xticks([0, 1, 2.0])
-    a2.set_xticklabels(["English", "Roman Urdu", "Same decision in\nboth languages"], fontsize=15)
+    eq_x = len(langs) + 0.0
+    bar(a2, eq_x, w2, eq["equivalence_rate"], eq["same_decision_in_all_languages"], n_intents, DARK)
+    a2.set_xticks(list(range(len(langs))) + [eq_x])
+    a2.set_xticklabels(langs + ["Same decision in\nall languages"], fontsize=14)
     a2.set_title("2. Is SemSec's final decision right?", loc="left", fontsize=16,
                  fontweight="bold", pad=34)
     a2.text(0, 1.03, "ALLOW / APPROVAL / DENY matches the labeled answer", transform=a2.transAxes,
             fontsize=12, color=GREY)
-    a2.axvline(1.5, color="#cccccc", lw=1.2, ls="--", zorder=1)
+    a2.axvline(len(langs) - 0.5, color="#cccccc", lw=1.2, ls="--", zorder=1)
 
     for ax in (a1, a2):
         ax.set_ylim(0, 118)
@@ -256,12 +258,12 @@ def draw_chart(m, path, stub=False):
         ax.tick_params(axis="y", length=0)
     a1.set_ylabel("Correct (%)", fontsize=13)
 
-    en, ru = pl[langs[0]]["agent_action_acc"], pl[langs[1]]["agent_action_acc"]
+    agent_txt = ",  ".join(f"{pl[l]['agent_action_acc']:.0f}% in {l}" for l in langs)
     fig.suptitle(f"Weak agent vs SemSec on {m['n_items']} labeled instructions "
-                 f"({n_intents} intents x English / Roman Urdu)", fontsize=18, fontweight="bold", y=0.985)
+                 f"({n_intents} intents x {' / '.join(langs)})", fontsize=18, fontweight="bold", y=0.985)
     fig.text(0.5, 0.075,
-             f"Weak agent: {en:.0f}% in English, {ru:.0f}% in Roman Urdu.   "
-             f"SemSec gives the same decision in both languages for "
+             f"Weak agent: {agent_txt}.   "
+             f"SemSec gives the same decision in all languages for "
              f"{eq['same_decision_in_all_languages']} of {n_intents} intents.",
              ha="center", fontsize=14, color="#222222")
     fig.text(0.5, 0.025,

@@ -77,7 +77,7 @@
       "category": "bulk",
       "expected_action": "delete_account",
       "got_action": "delete_account",
-      "got_target": "staging account",
+      "got_target": "every staging account",
       "expected_decision": "DENY",
       "got_decision": "DENY"
     },
