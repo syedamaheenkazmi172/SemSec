@@ -1,2 +1,0 @@
-{"decision": "DENY", "reasons": ["R6 self-escalation"], "role": "admin", "action": "change_permission", "target": "me", "resource": "permission", "permission_level": "admin", "is_self": true, "is_bulk": false, "sensitive": false, "ts": "2026-10-18 17:04:26"}
-{"decision": "ALLOW", "reasons": ["R1 single read"], "role": "admin", "action": "view_record", "target": "zahid", "resource": "record", "permission_level": null, "is_self": false, "is_bulk": false, "sensitive": false, "ts": "2026-10-18 17:04:58"}
